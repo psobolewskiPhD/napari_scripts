@@ -96,3 +96,5 @@ def profile_line(viewer):
         axes.set_xlim(np.min(line_len), np.max(line_len))
         axes.set_ylim(0, np.max(linescan) * (1.15))
         line.figure.canvas.draw_idle()
+
+    return mpl_fig
