@@ -15,7 +15,8 @@ def profile_line(viewer):
     img_layer = get_image_layer()
 
     # get img dimensions
-    (z, x, y) = img_layer.data.shape
+    x = img_layer.data.shape[-1]
+    y = img_layer.data.shape[-2]
 
     # draw line in the center 20% of x, y
     line = np.array([[4 * x // 10, 4 * y // 10], [6 * x // 10, 6 * y // 10]])
