@@ -21,7 +21,7 @@ def profile_line(viewer):
     # draw line in the center 20% of y, x
     line = np.array([[4 * y // 10, 4 * x // 10], [6 * y // 10, 6 * x // 10]])
     line_prof_layer = viewer.add_shapes(
-        line, shape_type="line", edge_color="red", name="Line Profile"
+        line, shape_type="line", edge_color="red", edge_width=4, name="Line Profile"
     )
     line_prof_layer.mode = "select"
 
