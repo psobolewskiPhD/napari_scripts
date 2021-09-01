@@ -8,7 +8,15 @@ import napari_line_profile_widget as linep
 ```
 and then permits:
 ```
-linep.profile_line(<insert name of napari viewer>) 
+graph = linep.profile_line(<insert name of napari viewer>) 
 ```
 This will add a shape layer with a red line and widget at the bottom of the Napari window. 
 The widget will display a plot of the pixel instensities along the red line.
+You can then access the plot by loading `matplotlib`:
+```
+import matplotlib.pyplot as plt
+```
+For example, to save:
+```
+graph.savefig("test_profile.png")
+```
