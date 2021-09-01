@@ -18,8 +18,8 @@ def profile_line(viewer):
     x = img_layer.data.shape[-1]
     y = img_layer.data.shape[-2]
 
-    # draw line in the center 20% of x, y
-    line = np.array([[4 * x // 10, 4 * y // 10], [6 * x // 10, 6 * y // 10]])
+    # draw line in the center 20% of y, x
+    line = np.array([[4 * y // 10, 4 * x // 10], [6 * y // 10, 6 * x // 10]])
     line_prof_layer = viewer.add_shapes(
         line, shape_type="line", edge_color="red", name="Line Profile"
     )
@@ -27,8 +27,11 @@ def profile_line(viewer):
 
     # get line profile using skimage.measure.profile_line
     def line_profile(img_layer, line_prof_layer):
-        slice_nr = viewer.dims.current_step[0]
-        slice = img_layer.data[slice_nr]
+        if img_layer.data.ndim > 2:
+            slice_nr = viewer.dims.current_step[0]
+            slice = img_layer.data[slice_nr]
+        else:
+            slice = img_layer.data
         if line_prof_layer.data:
             if line_prof_layer.shape_type[-1] == "line":
                 linescan = measure.profile_line(
