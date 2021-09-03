@@ -100,7 +100,7 @@ def profile_line(viewer):
     return line
 
 
-def show_plot(line):
+def get_figure(line):
     with plt.style.context("default"):
         plt.rcParams.update(
             {
