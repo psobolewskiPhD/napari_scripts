@@ -14,7 +14,7 @@ This will add a shape layer with a red line and widget at the bottom of the Napa
 The widget will display a plot of the pixel instensities along the red line.
 You can also get a nice figure (6"x3", 300 dpi) of the current line profile:
 ```
-line_figure = lp.get_figure(line_plot)
+line_figure = linepro.get_figure(line_plot)
 ```
 Then to save:
 ```
