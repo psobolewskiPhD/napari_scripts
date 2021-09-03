@@ -97,4 +97,22 @@ def profile_line(viewer):
         axes.set_ylim(0, np.max(linescan) * (1.15))
         line.figure.canvas.draw_idle()
 
-    return mpl_fig
+    return line
+
+
+def show_plot(line):
+    with plt.style.context("default"):
+        plt.rcParams.update(
+            {
+                "font.family": "sans-serif",
+                "font.sans-serif": "Fira Sans",
+                "font.size": 12,
+            }
+        )
+        fig = plt.figure(figsize=(6, 3), dpi=300)
+        ax = fig.add_subplot(1, 1, 1)
+        x_data = line.get_xdata()
+        y_data = line.get_ydata()
+        ax.plot(x_data, y_data)
+        plt.show()
+    return fig
