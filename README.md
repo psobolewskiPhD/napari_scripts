@@ -4,19 +4,19 @@
 # napari_line_profile_widget.py
 This is a module that can be imported, for example:
 ```
-import napari_line_profile_widget as linep
+import napari_line_profile_widget as linepro
 ```
 and then permits:
 ```
-graph = linep.profile_line(<insert name of napari viewer>) 
+line_plot = linepro.profile_line(<insert name of napari viewer>) 
 ```
 This will add a shape layer with a red line and widget at the bottom of the Napari window. 
 The widget will display a plot of the pixel instensities along the red line.
-You can then access the plot by loading `matplotlib`:
+You can also get a nice figure (6"x3", 300 dpi) of the current line profile:
 ```
-import matplotlib.pyplot as plt
+line_figure = lp.get_figure(line_plot)
 ```
-For example, to save:
+Then to save:
 ```
-graph.savefig("test_profile.png")
+line_figure.savefig("test_profile.png")
 ```
