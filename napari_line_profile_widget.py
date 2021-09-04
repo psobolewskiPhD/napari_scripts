@@ -69,7 +69,6 @@ def profile_line(viewer):
     )
     mpl_fig = plt.figure()
     ax = mpl_fig.add_subplot(1, 1, 1)
-
     # add the figure to the viewer as a FigureCanvas widget
     viewer.window.add_dock_widget(FigureCanvas(mpl_fig), area="bottom")
 
@@ -82,18 +81,21 @@ def profile_line(viewer):
     axes.set_ylim(0, np.max(linescan) * (1.15))
     line.figure.canvas.draw()
 
+    def update_profile(line_prof_layer):
+        linescan, px_size = line_profile(line_prof_layer)
+        line_len = np.arange(0, len(linescan) * px_size[-1], px_size[-1])
+        line.set_data(line_len, linescan)
+        axes.set_xlim(np.min(line_len), np.max(line_len))
+        axes.set_ylim(0, np.max(linescan) * (1.15))
+        line.figure.canvas.draw_idle()
+
     # connect a callback that updates the line plot via mouse drag
     @line_prof_layer.mouse_drag_callbacks.append
     def profile_lines_drag(line_prof_layer, event):
         yield
         while event.type == "mouse_move":
             try:
-                linescan, px_size = line_profile(line_prof_layer)
-                line_len = np.arange(0, len(linescan) * px_size[-1], px_size[-1])
-                line.set_data(line_len, linescan)
-                axes.set_xlim(np.min(line_len), np.max(line_len))
-                axes.set_ylim(0, np.max(linescan) * (1.15))
-                line.figure.canvas.draw_idle()
+                update_profile(line_prof_layer)
                 yield
             except IndexError:
                 pass
@@ -103,12 +105,7 @@ def profile_line(viewer):
     # connect to dimension slider to update on scroll
     @viewer.dims.events.current_step.connect
     def profile_lines_slice(event):
-        linescan, px_size = line_profile(line_prof_layer)
-        line_len = np.arange(0, len(linescan) * px_size[1], px_size[1])
-        line.set_data(line_len, linescan)
-        axes.set_xlim(np.min(line_len), np.max(line_len))
-        axes.set_ylim(0, np.max(linescan) * (1.15))
-        line.figure.canvas.draw_idle()
+        update_profile(line_prof_layer)
 
     return line
 
