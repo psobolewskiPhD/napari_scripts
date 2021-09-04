@@ -69,9 +69,16 @@ def profile_line(viewer):
     )
     mpl_fig = plt.figure()
     ax = mpl_fig.add_subplot(1, 1, 1)
-
     # add the figure to the viewer as a FigureCanvas widget
     viewer.window.add_dock_widget(FigureCanvas(mpl_fig), area="bottom")
+
+    def update_profile(line_prof_layer):
+        linescan, px_size = line_profile(line_prof_layer)
+        line_len = np.arange(0, len(linescan) * px_size[-1], px_size[-1])
+        line.set_data(line_len, linescan)
+        axes.set_xlim(np.min(line_len), np.max(line_len))
+        axes.set_ylim(0, np.max(linescan) * (1.15))
+        return line
 
     linescan, px_size = line_profile(line_prof_layer)
     # define the length of the line using px scale
@@ -88,11 +95,7 @@ def profile_line(viewer):
         yield
         while event.type == "mouse_move":
             try:
-                linescan, px_size = line_profile(line_prof_layer)
-                line_len = np.arange(0, len(linescan) * px_size[-1], px_size[-1])
-                line.set_data(line_len, linescan)
-                axes.set_xlim(np.min(line_len), np.max(line_len))
-                axes.set_ylim(0, np.max(linescan) * (1.15))
+                update_profile(line_prof_layer)
                 line.figure.canvas.draw_idle()
                 yield
             except IndexError:
@@ -103,11 +106,7 @@ def profile_line(viewer):
     # connect to dimension slider to update on scroll
     @viewer.dims.events.current_step.connect
     def profile_lines_slice(event):
-        linescan, px_size = line_profile(line_prof_layer)
-        line_len = np.arange(0, len(linescan) * px_size[1], px_size[1])
-        line.set_data(line_len, linescan)
-        axes.set_xlim(np.min(line_len), np.max(line_len))
-        axes.set_ylim(0, np.max(linescan) * (1.15))
+        update_profile(line_prof_layer)
         line.figure.canvas.draw_idle()
 
     return line
