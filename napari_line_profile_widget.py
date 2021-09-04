@@ -73,8 +73,10 @@ def profile_line(viewer):
     viewer.window.add_dock_widget(FigureCanvas(mpl_fig), area="bottom")
 
     linescan, px_size = line_profile(line_prof_layer)
-    # define the length of the line using px scale
-    line_len = np.arange(0, len(linescan) * px_size[-1], px_size[-1])
+    # define the length of the line using px scale (round to try to avoid length mismatch)
+    line_len = np.arange(
+        0, round(len(linescan) * round(px_size[-1], 3), 3), round(px_size[-1], 3)
+    )
     (line,) = ax.plot(line_len, linescan)
     axes = plt.gca()
     axes.set_xlim(np.min(line_len), np.max(line_len))
@@ -83,7 +85,9 @@ def profile_line(viewer):
 
     def update_profile(line_prof_layer):
         linescan, px_size = line_profile(line_prof_layer)
-        line_len = np.arange(0, len(linescan) * px_size[-1], px_size[-1])
+        line_len = np.arange(
+            0, round(len(linescan) * round(px_size[-1], 3), 3), round(px_size[-1], 3)
+        )
         line.set_data(line_len, linescan)
         axes.set_xlim(np.min(line_len), np.max(line_len))
         axes.set_ylim(0, np.max(linescan) * (1.15))
