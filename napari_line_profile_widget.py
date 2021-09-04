@@ -6,8 +6,9 @@ import napari
 
 
 def profile_line(viewer):
+    # get top most image layer
     def get_image_layer():
-        for layer in viewer.layers.selection:
+        for layer in viewer.layers:
             if isinstance(layer, napari.layers.Image):
                 img_layer = layer
         return img_layer
@@ -26,12 +27,14 @@ def profile_line(viewer):
     line_prof_layer.mode = "select"
 
     # get line profile using skimage.measure.profile_line
-    def line_profile(img_layer, line_prof_layer):
-        if img_layer.data.ndim > 2:
+    def line_profile(line_prof_layer):
+        # get the top most image layer
+        top_image = get_image_layer()
+        if top_image.data.ndim > 2:
             slice_nr = viewer.dims.current_step[0]
-            slice = img_layer.data[slice_nr]
+            slice = top_image.data[slice_nr]
         else:
-            slice = img_layer.data
+            slice = top_image.data
         if line_prof_layer.data:
             if line_prof_layer.shape_type[-1] == "line":
                 linescan = measure.profile_line(
@@ -61,7 +64,7 @@ def profile_line(viewer):
     # add the figure to the viewer as a FigureCanvas widget
     viewer.window.add_dock_widget(FigureCanvas(mpl_fig), area="bottom")
 
-    linescan = line_profile(img_layer, line_prof_layer)
+    linescan = line_profile(line_prof_layer)
     line_len = np.arange(len(linescan))
     (line,) = ax.plot(linescan)
     axes = plt.gca()
@@ -75,7 +78,7 @@ def profile_line(viewer):
         yield
         while event.type == "mouse_move":
             try:
-                linescan = line_profile(img_layer, shapes_layer)
+                linescan = line_profile(shapes_layer)
                 line_len = np.arange(len(linescan))
                 line.set_data(line_len, linescan)
                 axes.set_xlim(np.min(line_len), np.max(line_len))
@@ -90,7 +93,7 @@ def profile_line(viewer):
     # connect to dimension slider to update on scroll
     @viewer.dims.events.current_step.connect
     def profile_lines_slice(event):
-        linescan = line_profile(img_layer, line_prof_layer)
+        linescan = line_profile(line_prof_layer)
         line_len = np.arange(len(linescan))
         line.set_data(line_len, linescan)
         axes.set_xlim(np.min(line_len), np.max(line_len))
