@@ -116,3 +116,20 @@ def get_figure(line):
         ax.plot(x_data, y_data)
         plt.show()
     return fig
+
+
+def save_figure(line, name):
+    with plt.style.context("default"):
+        plt.rcParams.update(
+            {
+                "font.family": "sans-serif",
+                "font.sans-serif": "Fira Sans",
+                "font.size": 12,
+            }
+        )
+        fig = plt.figure(figsize=(6, 3), dpi=300)
+        ax = fig.add_subplot(1, 1, 1)
+        x_data = line.get_xdata()
+        y_data = line.get_ydata()
+        ax.plot(x_data, y_data)
+        fig.savefig(name)
