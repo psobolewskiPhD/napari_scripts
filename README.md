@@ -15,9 +15,9 @@ The widget will display a plot of the pixel instensities along the red line, as 
 The top most image layer will be used for the intensity data and the x-axis of the plot should be consistent with any scale data provided to napari. If you close and open a new image, move the line/change slice to update.
 You can also get a nice figure (6"x3", 300 dpi) of the current line profile:
 ```
-line_figure = linepro.get_figure(line_plot)
+linepro.get_figure(line_plot)
 ```
-Or to directly save:
+Or to also save, for example as PDF:
 ```
-linepro.save_fig(line_plot, "test_profile.png")
+linepro.get_figure(line_plot, name="test_profile.pdf")
 ```
