@@ -115,6 +115,7 @@ def profile_line(viewer):
     @viewer.layers.events.reordered.connect
     def update_layers(event):
         img_layer = get_image_layer()
+        update_profile(line_prof_layer)
         return img_layer
 
     # refresh on image layer visibility change
