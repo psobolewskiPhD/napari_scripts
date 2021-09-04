@@ -18,11 +18,18 @@ def profile_line(viewer):
     # get img dimensions
     x = img_layer.data.shape[-1]
     y = img_layer.data.shape[-2]
+    # get scale information
+    px_size = img_layer.scale
 
     # draw line in the center 20% of y, x
     line = np.array([[4 * y // 10, 4 * x // 10], [6 * y // 10, 6 * x // 10]])
     line_prof_layer = viewer.add_shapes(
-        line, shape_type="line", edge_color="red", edge_width=4, name="Line Profile"
+        line,
+        shape_type="line",
+        edge_color="red",
+        edge_width=4,
+        scale=px_size,
+        name="Line Profile",
     )
     line_prof_layer.mode = "select"
 
@@ -30,6 +37,8 @@ def profile_line(viewer):
     def line_profile(line_prof_layer):
         # get the top most image layer
         top_image = get_image_layer()
+        # get scale info
+        px_size = top_image.scale
         if top_image.data.ndim > 2:
             slice_nr = viewer.dims.current_step[0]
             slice = top_image.data[slice_nr]
@@ -43,7 +52,7 @@ def profile_line(viewer):
                     line_prof_layer.data[-1][1],
                     mode="reflect",
                 )
-                return linescan
+                return linescan, px_size
             else:
                 print("no line")
         else:
@@ -64,9 +73,10 @@ def profile_line(viewer):
     # add the figure to the viewer as a FigureCanvas widget
     viewer.window.add_dock_widget(FigureCanvas(mpl_fig), area="bottom")
 
-    linescan = line_profile(line_prof_layer)
-    line_len = np.arange(len(linescan))
-    (line,) = ax.plot(linescan)
+    linescan, px_size = line_profile(line_prof_layer)
+    # define the length of the line using px scale
+    line_len = np.arange(0, len(linescan) * px_size[-1], px_size[-1])
+    (line,) = ax.plot(line_len, linescan)
     axes = plt.gca()
     axes.set_xlim(np.min(line_len), np.max(line_len))
     axes.set_ylim(0, np.max(linescan) * (1.15))
@@ -74,12 +84,12 @@ def profile_line(viewer):
 
     # connect a callback that updates the line plot via mouse drag
     @line_prof_layer.mouse_drag_callbacks.append
-    def profile_lines_drag(shapes_layer, event):
+    def profile_lines_drag(line_prof_layer, event):
         yield
         while event.type == "mouse_move":
             try:
-                linescan = line_profile(shapes_layer)
-                line_len = np.arange(len(linescan))
+                linescan, px_size = line_profile(line_prof_layer)
+                line_len = np.arange(0, len(linescan) * px_size[-1], px_size[-1])
                 line.set_data(line_len, linescan)
                 axes.set_xlim(np.min(line_len), np.max(line_len))
                 axes.set_ylim(0, np.max(linescan) * (1.15))
@@ -93,8 +103,8 @@ def profile_line(viewer):
     # connect to dimension slider to update on scroll
     @viewer.dims.events.current_step.connect
     def profile_lines_slice(event):
-        linescan = line_profile(line_prof_layer)
-        line_len = np.arange(len(linescan))
+        linescan, px_size = line_profile(line_prof_layer)
+        line_len = np.arange(0, len(linescan) * px_size[1], px_size[1])
         line.set_data(line_len, linescan)
         axes.set_xlim(np.min(line_len), np.max(line_len))
         axes.set_ylim(0, np.max(linescan) * (1.15))
