@@ -16,7 +16,7 @@ You can also get a nice figure (6"x3", 300 dpi) of the current line profile:
 ```
 line_figure = linepro.get_figure(line_plot)
 ```
-Then to save:
+Or to directly save:
 ```
-line_figure.savefig("test_profile.png")
+linepro.save_fig(line_plot, "test_profile.png")
 ```
