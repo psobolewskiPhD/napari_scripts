@@ -20,6 +20,7 @@ def profile_line(viewer):
     y = img_layer.data.shape[-2]
     # get scale information
     px_size = img_layer.scale
+    global units
     if viewer.scale_bar.unit is None:
         units = "px"
     elif viewer.scale_bar.unit == "um":
@@ -138,6 +139,8 @@ def get_figure(line, name=None):
         x_data = line.get_xdata()
         y_data = line.get_ydata()
         ax.plot(x_data, y_data)
+        ax.set_xlabel(f"Line length ({units})", loc="right")
+        ax.set_ylabel("Intensity (AU)", loc="top")
         if name is not None:
             fig.savefig(name)
         plt.show()
