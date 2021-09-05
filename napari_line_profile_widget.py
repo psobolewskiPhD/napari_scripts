@@ -67,6 +67,7 @@ def profile_line(viewer):
     # set params and create mpl figure with subplots
     plt.rcParams.update(
         {
+            "figure.autolayout": True,
             "font.size": 12,
             "xtick.color": "grey",
             "ytick.color": "grey",
