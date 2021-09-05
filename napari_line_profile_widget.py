@@ -20,6 +20,12 @@ def profile_line(viewer):
     y = img_layer.data.shape[-2]
     # get scale information
     px_size = img_layer.scale
+    if viewer.scale_bar.unit is None:
+        units = "px"
+    elif viewer.scale_bar.unit == "um":
+        units = "µm"
+    else:
+        units = viewer.scale_bar.unit
 
     # draw line in the center 20% of y, x
     line = np.array([[4 * y // 10, 4 * x // 10], [6 * y // 10, 6 * x // 10]])
@@ -81,6 +87,9 @@ def profile_line(viewer):
     axes = plt.gca()
     axes.set_xlim(np.min(line_len), np.max(line_len))
     axes.set_ylim(0, np.max(linescan) * (1.15))
+    ax.set_xlabel(f"Line length ({units})", color="grey")
+    ax.set_ylabel("Intensity (AU)", color="grey")
+    plt.tight_layout()
     line.figure.canvas.draw()
 
     def update_profile(line_prof_layer):
