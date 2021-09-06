@@ -19,7 +19,7 @@ def profile_line(viewer):
     x = img_layer.data.shape[-1]
     y = img_layer.data.shape[-2]
     # get scale information
-    px_size = img_layer.scale
+    px_size = img_layer.scale[-2:]
     global units
     if viewer.scale_bar.unit is None:
         units = "px"
