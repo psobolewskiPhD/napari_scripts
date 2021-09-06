@@ -6,10 +6,10 @@ import napari
 
 
 def profile_line(viewer):
-    # get top most image layer
+    # get top-most, visible image layer
     def get_image_layer():
         for layer in viewer.layers:
-            if isinstance(layer, napari.layers.Image):
+            if isinstance(layer, napari.layers.Image) and layer.visible != 0:
                 img_layer = layer
         return img_layer
 
@@ -120,6 +120,18 @@ def profile_line(viewer):
     # connect to dimension slider to update on scroll
     @viewer.dims.events.current_step.connect
     def profile_lines_slice(event):
+        update_profile(line_prof_layer)
+
+    # refresh on layer move
+    @viewer.layers.events.reordered.connect
+    def update_layers(event):
+        img_layer = get_image_layer()
+        img_layer.events.visible.connect(check_vis)
+        update_profile(line_prof_layer)
+
+    # refresh on image layer visibility change
+    @img_layer.events.visible.connect
+    def check_vis(event):
         update_profile(line_prof_layer)
 
     return line
