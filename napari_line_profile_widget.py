@@ -45,7 +45,7 @@ def profile_line(viewer):
         # get the top most image layer
         top_image = get_image_layer()
         # get scale info
-        px_size = top_image.scale
+        px_size = top_image.scale[-2:]
         if top_image.data.ndim > 2:
             slice_nr = viewer.dims.current_step[0]
             slice = top_image.data[slice_nr]
