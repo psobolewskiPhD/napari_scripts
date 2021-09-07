@@ -155,18 +155,36 @@ def get_figure(line, viewer, name=None, screenshot=True):
             fig, ax = plt.subplots(
                 2,
                 1,
-                figsize=(width * 1.115, height * 1.13 * (3.55 + ratio - 0.1) / (3.55)),
+                figsize=(width * 1.12, height * 1.14 * (3.55 + ratio - 0.1) / (3.55)),
                 dpi=dpi,
                 constrained_layout=True,
                 gridspec_kw={"height_ratios": [3.55, ratio - 0.1]},
             )
             ax[0].imshow(screeny)
             ax[0].axis("off")
+            ax[0].text(
+                -0.15,
+                1.02,
+                "A",
+                transform=ax[0].transAxes,
+                fontsize=16,
+                fontweight="bold",
+                va="top",
+            )
             x_data = line.get_xdata()
             y_data = line.get_ydata()
             ax[1].plot(x_data, y_data)
             ax[1].set_xlabel(f"Line length ({units})", loc="right")
-            ax[1].set_ylabel("Intensity (AU)", loc="top")
+            ax[1].set_ylabel("Intensity (AU)")
+            ax[1].text(
+                -0.15,
+                1.075,
+                "B",
+                transform=ax[1].transAxes,
+                fontsize=16,
+                fontweight="bold",
+                va="top",
+            )
             if name is not None:
                 fig.savefig(name, dpi=fig.dpi)
             plt.show()
