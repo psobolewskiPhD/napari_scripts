@@ -137,22 +137,56 @@ def profile_line(viewer):
     return line
 
 
-def get_figure(line, name=None):
-    with plt.style.context("default"):
-        plt.rcParams.update(
-            {
-                "font.family": "sans-serif",
-                "font.sans-serif": "Fira Sans",
-                "font.size": 12,
-            }
-        )
-        fig = plt.figure(figsize=(6, 3), dpi=300)
-        ax = fig.add_subplot(1, 1, 1)
-        x_data = line.get_xdata()
-        y_data = line.get_ydata()
-        ax.plot(x_data, y_data)
-        ax.set_xlabel(f"Line length ({units})", loc="right")
-        ax.set_ylabel("Intensity (AU)", loc="top")
-        if name is not None:
-            fig.savefig(name)
-        plt.show()
+def get_figure(line, viewer, name=None, screenshot=True):
+    if screenshot is True:
+        screeny = viewer.screenshot()
+        dpi = 300
+        width = screeny.shape[1] / dpi
+        height = screeny.shape[0] / dpi
+        ratio = width / height
+        with plt.style.context("default"):
+            plt.rcParams.update(
+                {
+                    "font.family": "sans-serif",
+                    "font.sans-serif": "Fira Sans",
+                    "font.size": 9,
+                }
+            )
+            fig, ax = plt.subplots(
+                2,
+                1,
+                figsize=(width * 1.115, height * 1.13 * (3.55 + ratio - 0.1) / (3.55)),
+                dpi=dpi,
+                constrained_layout=True,
+                gridspec_kw={"height_ratios": [3.55, ratio - 0.1]},
+            )
+            ax[0].imshow(screeny)
+            ax[0].axis("off")
+            x_data = line.get_xdata()
+            y_data = line.get_ydata()
+            ax[1].plot(x_data, y_data)
+            ax[1].set_xlabel(f"Line length ({units})", loc="right")
+            ax[1].set_ylabel("Intensity (AU)", loc="top")
+            if name is not None:
+                fig.savefig(name, dpi=fig.dpi)
+            plt.show()
+    else:
+        with plt.style.context("default"):
+            plt.rcParams.update(
+                {
+                    "figure.autolayout": True,
+                    "font.family": "sans-serif",
+                    "font.sans-serif": "Fira Sans",
+                    "font.size": 10,
+                }
+            )
+            fig = plt.figure(figsize=(6, 3), dpi=300)
+            ax = fig.add_subplot(1, 1, 1)
+            x_data = line.get_xdata()
+            y_data = line.get_ydata()
+            ax.plot(x_data, y_data)
+            ax.set_xlabel(f"Line length ({units})", loc="right")
+            ax.set_ylabel("Intensity (AU)", loc="top")
+            if name is not None:
+                fig.savefig(name, dpi=fig.dpi)
+            plt.show()
