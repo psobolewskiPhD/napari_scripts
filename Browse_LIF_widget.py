@@ -5,9 +5,10 @@ from qtpy.QtWidgets import QListWidget, QAbstractItemView, QListWidgetItem
 from qtpy.QtCore import Qt, QUrl, QFileInfo
 import napari
 
-
 #%%
+# Make a custom QListWidget that can accept drag and drop
 class SceneList(QListWidget):
+    # be able to pass the Napari viewer name (viewer)
     def __init__(self, viewer, parent=None):
         super().__init__(parent)
         self.viewer = viewer
@@ -31,17 +32,19 @@ class SceneList(QListWidget):
         if event.mimeData().hasUrls():
             event.setDropAction(Qt.CopyAction)
             event.accept()
-
+            # Check that it's a LIF file
             for url in event.mimeData().urls():
                 img_file = str(url.toLocalFile())
                 info = QFileInfo(img_file)
                 if info.completeSuffix() == "lif":
-                    # Load data from LIF into a dask stack
+                    # Load data from LIF using AICSImage
                     img = AICSImage(img_file, reconstruct_mosaic=False)
+                    # Make a list of the scenes
                     for scene in img.scenes:
                         self.addItem(scene)
                     self.img = img
                 else:
+                    print("Not a LIF")
                     event.ignore()
         else:
             event.ignore()
