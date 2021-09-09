@@ -53,19 +53,35 @@ class SceneList(QListWidget):
         item = self.currentItem()
         scene = item.text()
         self.img.set_scene(scene)
-        if self.img.shape[0] == 1:
-            M = ""
-        else:
+        if len(self.img.shape) == 6:
             M = "M"
-        if self.img.shape[1] == 1:
-            T = ""
+            if self.img.shape[1] == 1:
+                C = ""
+            else:
+                C = "C"
+            if self.img.shape[2] == 1:
+                T = ""
+            else:
+                T = "T"
+            if self.img.shape[3] == 1:
+                Z = ""
+            else:
+                Z = "Z"
         else:
-            T = "T"
-        if self.img.shape[2] == 1:
-            Z = ""
-        else:
-            Z = "Z"
-        channels = M + T + Z + "YX"
+            M = ""
+            if self.img.shape[0] == 1:
+                C = ""
+            else:
+                C = "C"
+            if self.img.shape[1] == 1:
+                T = ""
+            else:
+                T = "T"
+            if self.img.shape[2] == 1:
+                Z = ""
+            else:
+                Z = "Z"
+        channels = M + C + T + Z + "YX"
         if self.img.physical_pixel_sizes.Z is None:
             scale = [
                 self.img.physical_pixel_sizes.Y,
