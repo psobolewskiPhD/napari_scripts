@@ -64,8 +64,15 @@ class SceneList(QListWidget):
                 self.img.physical_pixel_sizes.Y,
                 self.img.physical_pixel_sizes.X,
             ]
+        if self.viewer.theme == "light":
+            colormap = "gray_r"
+        else:
+            colormap = "gray"
         self.viewer.add_image(
-            self.img.get_image_dask_data("MTCZYX"), name=scene, scale=scale
+            self.img.get_image_dask_data("MTCZYX"),
+            name=scene,
+            scale=scale,
+            colormap=colormap,
         )
         self.viewer.scale_bar.visible = True
 
