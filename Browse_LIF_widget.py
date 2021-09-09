@@ -53,6 +53,19 @@ class SceneList(QListWidget):
         item = self.currentItem()
         scene = item.text()
         self.img.set_scene(scene)
+        if self.img.shape[0] == 1:
+            M = ""
+        else:
+            M = "M"
+        if self.img.shape[1] == 1:
+            T = ""
+        else:
+            T = "T"
+        if self.img.shape[2] == 1:
+            Z = ""
+        else:
+            Z = "Z"
+        channels = M + T + Z + "YX"
         if self.img.physical_pixel_sizes.Z is None:
             scale = [
                 self.img.physical_pixel_sizes.Y,
@@ -69,7 +82,7 @@ class SceneList(QListWidget):
         else:
             colormap = "gray"
         self.viewer.add_image(
-            self.img.get_image_dask_data("MTCZYX"),
+            self.img.get_image_dask_data(channels),
             name=scene,
             scale=scale,
             colormap=colormap,
