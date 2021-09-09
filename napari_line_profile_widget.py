@@ -78,7 +78,9 @@ def profile_line(viewer):
     mpl_fig = plt.figure()
     ax = mpl_fig.add_subplot(1, 1, 1)
     # add the figure to the viewer as a FigureCanvas widget
-    viewer.window.add_dock_widget(FigureCanvas(mpl_fig), area="bottom")
+    viewer.window.add_dock_widget(
+        FigureCanvas(mpl_fig), area="bottom", name="Line profile"
+    )
 
     linescan, px_size = line_profile(line_prof_layer)
     # define the length of the line using px scale (round to try to avoid length mismatch)
