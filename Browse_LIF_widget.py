@@ -50,10 +50,21 @@ class SceneList(QListWidget):
         item = self.currentItem()
         scene = item.text()
         self.img.set_scene(scene)
-        scale = [self.img.physical_pixel_sizes.Y, self.img.physical_pixel_sizes.X]
+        if self.img.physical_pixel_sizes.Z is None:
+            scale = [
+                self.img.physical_pixel_sizes.Y,
+                self.img.physical_pixel_sizes.X,
+            ]
+        else:
+            scale = [
+                self.img.physical_pixel_sizes.Z,
+                self.img.physical_pixel_sizes.Y,
+                self.img.physical_pixel_sizes.X,
+            ]
         self.viewer.add_image(
             self.img.get_image_dask_data("MTCZYX"), name=scene, scale=scale
         )
+        self.viewer.scale_bar.visible = True
 
 
 #%%
