@@ -52,7 +52,7 @@ class SceneList(QListWidget):
         self.img.set_scene(scene)
         scale = [self.img.physical_pixel_sizes.Y, self.img.physical_pixel_sizes.X]
         self.viewer.add_image(
-            self.img.get_image_dask_data("CZYX"), name=scene, scale=scale
+            self.img.get_image_dask_data("MTCZYX"), name=scene, scale=scale
         )
 
 
