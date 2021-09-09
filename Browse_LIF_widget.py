@@ -110,7 +110,7 @@ class SceneList(QListWidget):
 def lif_widget():
     viewer = napari.Viewer()
     list_widget = SceneList(viewer)
-    viewer.window.add_dock_widget([list_widget], area="right")
+    viewer.window.add_dock_widget([list_widget], area="right", name="LIF Scene Browser")
     return viewer
 
 
