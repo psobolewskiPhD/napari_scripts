@@ -1,11 +1,10 @@
-#%%
+# %%
 from aicsimageio import AICSImage
-from vispy.color import Colormap
-from qtpy.QtWidgets import QListWidget, QAbstractItemView, QListWidgetItem
-from qtpy.QtCore import Qt, QUrl, QFileInfo
+from qtpy.QtWidgets import QListWidget
+from qtpy.QtCore import Qt, QFileInfo
 import napari
 
-#%%
+# %%
 # Make a custom QListWidget that can accept drag and drop
 class SceneList(QListWidget):
     # be able to pass the Napari viewer name (viewer)
@@ -106,12 +105,12 @@ class SceneList(QListWidget):
         self.viewer.scale_bar.visible = True
 
 
-#%%
+# %%
 def lif_widget():
     viewer = napari.Viewer()
     list_widget = SceneList(viewer)
-    viewer.window.add_dock_widget([list_widget], area="right", name="LIF Scene Browser")
+    viewer.window.add_dock_widget(list_widget, area="right", name="LIF Scene Browser")
     return viewer
 
 
-#%%
+# %%
