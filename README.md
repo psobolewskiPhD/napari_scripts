@@ -36,3 +36,21 @@ The figure can be saved, for example as PDF:
 ```
 linepro.get_figure(line_plot, <insert name of napari viewer>, name="test_profile.pdf")
 ```
+
+# napari_measure.py
+This is a module that can be imported, for example:
+```
+import napari_measure as nm
+```
+and then permits:
+```
+nm.measure_shape()
+```
+This will add a shape layer to the napari window and bind the keybind `m` to measuring:
+- length of lines drawn with `line` tool
+- area of rectangles drawn with `rectangle` or `ellipse` tools
+The keybind can be changed, by passing a different keybind as a string. For example, to set the keybind to `z`:
+```
+nm.measure_shape("z")
+```
+The measurements will be printed and appear where napari was launched (terminal or notebook/ipython). Finally, the measurements should take into account any scale and unit information for the topmost image layer.
