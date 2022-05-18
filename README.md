@@ -47,10 +47,10 @@ and then permits:
 nm.measure_shape()
 ```
 This will add a shape layer to the napari window and bind the keybind `m` to measuring:
-- length of lines drawn with `line` tool
-- area of rectangles drawn with `rectangle` or `ellipse` tools
+- length of lines drawn with `line` or `path` tools
+- area of shapes drawn with `rectangle`, `polygon`, or `ellipse` tools
 The keybind can be changed, by passing a different keybind as a string. For example, to set the keybind to `z`:
 ```
 nm.measure_shape("z")
 ```
-The measurements will be printed and appear where napari was launched (terminal or notebook/ipython). Finally, the measurements should take into account any scale and unit information for the topmost image layer.
+The measurements will be printed and appear where napari was launched (terminal or notebook/ipython). Make sure there is an open, visible image layer, so that the measurements can take into account any scale and unit information.
