@@ -52,7 +52,7 @@ def measure_shape(
 
     @viewer.bind_key(keybind, overwrite=overwrite)
     @magicgui(call_button=f"Measure ({keybind})", result_widget=True)
-    def measure_prop() -> magicgui.widgets.Table:
+    def measure_prop(viewer: napari.Viewer) -> magicgui.widgets.Table:
         layer = measure_layer
         if layer.data:
             # Check if a shape is selected, if so use that shape
