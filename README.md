@@ -37,22 +37,24 @@ The figure can be saved, for example as PDF:
 linepro.get_figure(line_plot, <insert name of napari viewer>, name="test_profile.pdf")
 ```
 
-# napari_measure.py
+# napari_measure_widget.py
 This is a module that can be imported, for example:
 ```
-import napari_measure as nm
+import napari_measure_widget as nmw
 ```
 and then permits:
 ```
-nm.measure_shape()
+nmw.measure_shape(<insert name of napari viewer>)
 ```
-This will add a shape layer to the napari window and bind the keybind `m` to measuring:
+This will add a shape layer to the napari window and create a widget to display a table of results. By default, the key `m` will be bound to measuring:
 - length of lines drawn with `line` or `path` tools
 - angle between `path` segments, for the case of a `path` of two segments (3 points)
 - area of shapes drawn with `rectangle`, `polygon`, or `ellipse` tools
 The last drawn shape will be measured, unless a shape is selected.
 The keybind can be changed, by passing a different keybind as a string. For example, to set the keybind to `z`:
 ```
-nm.measure_shape("z")
+nm.measure_shape(<insert name of napari viewer>, keybind="z")
 ```
-The measurements will be printed and appear where napari was launched (terminal or notebook/ipython). Make sure there is an open, visible image layer, so that the measurements can take into account any scale and unit information.
+By default, existing keybinds will *not* be overwritten. To overwrite an existing keybind (for example, if re-opening the widget), you must pass `overwrite=True`.
+The measurements will be displayed in a table in the widget. 
+Make sure there is an open, visible image layer, so that the measurements can take into account any scale and unit information.
