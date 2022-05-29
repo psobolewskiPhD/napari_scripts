@@ -9,11 +9,12 @@ from magicgui import magicgui
 
 if TYPE_CHECKING:
     import napari.layers
-    import napari.viewer
+    import napari.types
 
 
-def measure_shape(keybind: str = "m") -> None:
-    viewer = napari.current_viewer()
+def measure_shape(
+    viewer: napari.Viewer, keybind: str = "m", overwrite: bool = False
+) -> None:
     # get top-most, visible image layer
     img_layer = None
     for layer in viewer.layers:
@@ -49,10 +50,10 @@ def measure_shape(keybind: str = "m") -> None:
         f"Area ({units}\u00b2)": [],
     }
 
-    @viewer.bind_key(keybind)
+    @viewer.bind_key(keybind, overwrite=overwrite)
     @magicgui(call_button=f"Measure ({keybind})", result_widget=True)
-    def measure_prop(viewer: napari.Viewer) -> magicgui.widgets.Table:
-        layer = viewer.layers["Measure"]
+    def measure_prop() -> magicgui.widgets.Table:
+        layer = measure_layer
         if layer.data:
             # Check if a shape is selected, if so use that shape
             if layer.selected_data:
@@ -122,9 +123,12 @@ def measure_shape(keybind: str = "m") -> None:
                         )
                     )
                     angle_deg = np.rad2deg(angle_rad)
+                    result_table["Angle (°)"].append(round(angle_deg))
+                else:
+                    result_table["Angle (°)"].append("N/A")
+
                 result_table["Shape"].append("Path")
                 result_table[f"Length ({units})"].append(round(length))
-                result_table["Angle (°)"].append(round(angle_deg))
                 result_table[f"Area ({units}\u00b2)"].append("N/A")
 
         return result_table
