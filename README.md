@@ -48,6 +48,7 @@ nm.measure_shape()
 ```
 This will add a shape layer to the napari window and bind the keybind `m` to measuring:
 - length of lines drawn with `line` or `path` tools
+- angle between `path` segments, for the case of a `path` of two segments (3 points)
 - area of shapes drawn with `rectangle`, `polygon`, or `ellipse` tools
 The last drawn shape will be measured, unless a shape is selected.
 The keybind can be changed, by passing a different keybind as a string. For example, to set the keybind to `z`:
