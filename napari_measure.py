@@ -86,6 +86,11 @@ def measure_shape(keybind:str="m")->None:
                         * px_size[-1]
                     )
                 print(f"Length: {round(length, 1)} {units}")
+                if m_shape_vertices.shape[0] == 3:
+                    angle_rad = np.arccos(np.inner(m_shape_vertices[0]-m_shape_vertices[1], m_shape_vertices[2]-m_shape_vertices[1])/(np.linalg.norm(m_shape_vertices[1]-m_shape_vertices[0])*np.linalg.norm(m_shape_vertices[2]-m_shape_vertices[1])))
+                    angle_deg = np.rad2deg(angle_rad)
+                    print(f"Angle: {round(angle_deg, 1)}°")
+                    
             else:
                 print("Not a line, path, rectangle, polygon, or ellipse")
         else:
