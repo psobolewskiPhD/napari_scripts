@@ -32,9 +32,10 @@ def measure_shape(
         units = "µm"
     else:
         units = viewer.scale_bar.unit
-
+    ndim = len(img_layer.data.shape)
     measure_layer = viewer.add_shapes(
         None,
+        ndim=ndim,
         edge_color="red",
         edge_width=2,
         scale=px_size,
