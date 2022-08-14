@@ -9,6 +9,7 @@ There will be 3 tabs:
 1. Allows access to inverted ChrisLUTs by @cleterrier (https://github.com/cleterrier/ChrisLUTs)
 2. Allows one to make a colormap by specifying a name, whether it should be inverted, and the end-point color.
 3. Allows for importing of ImageJ .lut files (both ascii and binary) and applying them to layers in napari.  
+
 Note: inverted LUTs are not yet supported for multichannel images in napari. Also, when you apply a colormap to an image, it will persist in the napari colormaps menu for the duration of the viewer (even with the widget closed).
 
 # napari_line_profile_widget.py
