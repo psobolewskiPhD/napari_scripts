@@ -12,6 +12,8 @@ from magicgui.widgets import create_widget
 from skimage import data
 
 # %%
+# These are vispy implementations of the inverted LUTs by @cleterrier from:
+# https://github.com/cleterrier/ChrisLUTs
 ColormapDict = {
     "I_Forest": Colormap([[1, 1, 1], [0, 0.6, 0]]),
     "I_Blue": Colormap([[1, 1, 1], [0, 0, 1]]),
@@ -40,7 +42,7 @@ class CustomWidget(QWidget):
         self.tabs = QTabWidget()
         self.main_layout.addWidget(self.tabs)
 
-        # apply_colormaps tab
+        # Make a tab to apply ChrisLUTs
         self.apply_colormap = QWidget()
         self._apply_colormap_layout = QVBoxLayout()
         self.apply_colormap.setLayout(self._apply_colormap_layout)
@@ -61,7 +63,7 @@ class CustomWidget(QWidget):
         self._apply_colormap_layout.setAlignment(Qt.AlignTop)
 
         
-        # make colormaps tab
+        # make a tab for generating a colormap
         self.make_colormaps = QWidget()
         self._make_colormaps_layout = QVBoxLayout()
         self.make_colormaps.setLayout(self._make_colormaps_layout)
@@ -90,12 +92,13 @@ class CustomWidget(QWidget):
         self.apply_colormap_button.clicked.connect(self._apply_own_colormap)
 
 
-        # import imageJ LUT tab
+        # make a tab to import and apply an imageJ LUT
+        # both ascii and binary .lut files are supported
         self.import_LUT = QWidget()
         self._import_LUT_layout = QVBoxLayout()
         self.import_LUT.setLayout(self._import_LUT_layout)
         self.tabs.addTab(self.import_LUT, 'Import ImageJ LUT')
-        self.import_LUT_button = QPushButton("Select LUT to import & apply")
+        self.import_LUT_button = QPushButton("Select LUT to import and apply")
         self._import_LUT_layout.addWidget(self.import_LUT_button)
         self.import_LUT_button.clicked.connect(self._on_click_import_LUT)
 
@@ -109,12 +112,14 @@ class CustomWidget(QWidget):
             
     def _on_click_import_LUT(self):
         self.LUT_file_path = Path(QFileDialog.getOpenFileName(self, "Select ImageJ LUT file")[0])
+        # try reading .lut as ascii
         try:
             lut = np.loadtxt(self.LUT_file_path, delimiter="\t", skiprows=1)
             self.viewer.layers.selection.active.colormap = self.LUT_file_path.stem, NpColormap(lut[:,1:4]/255, name=self.LUT_file_path.stem, display_name=self.LUT_file_path.stem)
             return
         except Exception as e:
             pass
+        # try reading .lut as binary
         try:
             dtype = np.dtype('B')
             with open(self.LUT_file_path, "rb") as f:
@@ -124,10 +129,8 @@ class CustomWidget(QWidget):
             print('Error While Opening the file!')   
 
 # %%
-#viewer = napari.Viewer()
-# %%
-my_widget = CustomWidget()
-viewer.window.add_dock_widget(my_widget)
+colormap_widget = CustomWidget()
+viewer.window.add_dock_widget(colormap_widget, area='right', name='Colormap Manager')
 
 
 # %%
