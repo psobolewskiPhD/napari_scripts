@@ -34,6 +34,7 @@ viewer.add_image(data.cells3d()[:,1,:])
 class CustomWidget(QWidget):
     def __init__(self) -> None:
         super().__init__()
+        self.viewer = napari.current_viewer()
         self.main_layout = QVBoxLayout()
         self.setLayout(self.main_layout) 
         self.tabs = QTabWidget()
@@ -50,17 +51,12 @@ class CustomWidget(QWidget):
         colormap_choices._allitems = set(NapariColormaps)
         for name, colormap in NapariColormaps.items():
            colormap_choices.addItem(name, colormap)
+
         def set_lut():
-            self._layer_combo.value.colormap = colormap_choices.currentData()
+            self.viewer.layers.selection.active.colormap = colormap_choices.currentData()
 
         self.colormapComboBox = colormap_choices
-
         colormap_choices.currentTextChanged.connect(set_lut)
-
-        # change annotation to napari.layers.Image (e.g) to restrict to just Images
-        self._layer_combo = create_widget(annotation=napari.layers.Image)
-        # magicgui widgets hold the Qt widget at `widget.native`
-        self._apply_colormap_layout.addWidget(self._layer_combo.native)
         self._apply_colormap_layout.addWidget(self.colormapComboBox)
         self._apply_colormap_layout.setAlignment(Qt.AlignTop)
 
@@ -93,6 +89,7 @@ class CustomWidget(QWidget):
         self._make_colormaps_layout.addWidget(self.apply_colormap_button)
         self.apply_colormap_button.clicked.connect(self._apply_own_colormap)
 
+
         # import imageJ LUT tab
         self.import_LUT = QWidget()
         self._import_LUT_layout = QVBoxLayout()
@@ -108,13 +105,13 @@ class CustomWidget(QWidget):
             else:
                 start = [0, 0, 0]
             own_colormap = Colormap([start, [self.R_value.value()/255, self.G_value.value()/255, self.B_value.value()/255]])
-            self._layer_combo.value.colormap = self.colormap_name.text(), own_colormap
+            self.viewer.layers.selection.active.colormap = self.colormap_name.text(), own_colormap
             
     def _on_click_import_LUT(self):
         self.LUT_file_path = Path(QFileDialog.getOpenFileName(self, "Select ImageJ LUT file")[0])
         try:
             lut = np.loadtxt(self.LUT_file_path, delimiter="\t", skiprows=1)
-            self._layer_combo.value.colormap = self.LUT_file_path.stem, NpColormap(lut[:,1:4]/255, name=self.LUT_file_path.stem, display_name=self.LUT_file_path.stem)
+            self.viewer.layers.selection.active.colormap = self.LUT_file_path.stem, NpColormap(lut[:,1:4]/255, name=self.LUT_file_path.stem, display_name=self.LUT_file_path.stem)
             return
         except Exception as e:
             pass
@@ -122,7 +119,7 @@ class CustomWidget(QWidget):
             dtype = np.dtype('B')
             with open(self.LUT_file_path, "rb") as f:
                 numpy_data = np.fromfile(f,dtype)
-            self._layer_combo.value.colormap = self.LUT_file_path.stem, NpColormap(numpy_data.reshape(3, 256).T/255, name=self.LUT_file_path.stem, display_name=self.LUT_file_path.stem)
+            self.viewer.layers.selection.active.colormap = self.LUT_file_path.stem, NpColormap(numpy_data.reshape(3, 256).T/255, name=self.LUT_file_path.stem, display_name=self.LUT_file_path.stem)
         except IOError:
             print('Error While Opening the file!')   
 
@@ -132,9 +129,6 @@ class CustomWidget(QWidget):
 my_widget = CustomWidget()
 viewer.window.add_dock_widget(my_widget)
 
-my_widget._layer_combo.reset_choices()
-viewer.layers.events.inserted.connect(my_widget._layer_combo.reset_choices)
-viewer.layers.events.removed.connect(my_widget._layer_combo.reset_choices)
 
 # %%
 napari.run()
