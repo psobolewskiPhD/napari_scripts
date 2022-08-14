@@ -1,15 +1,15 @@
 # %%
 import napari
-from qtpy.QtWidgets import QVBoxLayout, QWidget, QTabWidget, QCheckBox, QSpinBox, QLabel, QPushButton, QLineEdit
+import numpy as np
+from pathlib import Path
+from qtpy.QtWidgets import (QFileDialog, QVBoxLayout, QWidget, QTabWidget, QCheckBox, QSpinBox, QLabel, QPushButton, QLineEdit)
+from qtpy.QtCore import Qt
 from napari._qt.layer_controls.qt_colormap_combobox import QtColormapComboBox
 from vispy.color import Colormap
-from napari.utils.colormaps import SIMPLE_COLORMAPS
+from napari.utils.colormaps import Colormap as NpColormap
 from napari.utils.colormaps.colormap_utils import convert_vispy_colormap, ensure_colormap
 from magicgui.widgets import create_widget
 from skimage import data
-from qtpy.QtCore import Qt
-
-
 
 # %%
 ColormapDict = {
@@ -91,17 +91,40 @@ class CustomWidget(QWidget):
         
         self.apply_colormap_button = QPushButton("Apply Colormap")
         self._make_colormaps_layout.addWidget(self.apply_colormap_button)
+        self.apply_colormap_button.clicked.connect(self._apply_own_colormap)
 
-        def apply_own_colormap():
+        # import imageJ LUT tab
+        self.import_LUT = QWidget()
+        self._import_LUT_layout = QVBoxLayout()
+        self.import_LUT.setLayout(self._import_LUT_layout)
+        self.tabs.addTab(self.import_LUT, 'Import ImageJ LUT')
+        self.import_LUT_button = QPushButton("Select LUT to import & apply")
+        self._import_LUT_layout.addWidget(self.import_LUT_button)
+        self.import_LUT_button.clicked.connect(self._on_click_import_LUT)
+
+    def _apply_own_colormap(self):
             if self.inverted_colormap.isChecked():
                 start = [1, 1, 1]
             else:
                 start = [0, 0, 0]
             own_colormap = Colormap([start, [self.R_value.value()/255, self.G_value.value()/255, self.B_value.value()/255]])
             self._layer_combo.value.colormap = self.colormap_name.text(), own_colormap
-            colormap_choices.addItem(self.colormap_name.text(), own_colormap)
-
-        self.apply_colormap_button.clicked.connect(apply_own_colormap)
+            
+    def _on_click_import_LUT(self):
+        self.LUT_file_path = Path(QFileDialog.getOpenFileName(self, "Select ImageJ LUT file")[0])
+        try:
+            lut = np.loadtxt(self.LUT_file_path, delimiter="\t", skiprows=1)
+            self._layer_combo.value.colormap = self.LUT_file_path.stem, NpColormap(lut[:,1:4]/255, name=self.LUT_file_path.stem, display_name=self.LUT_file_path.stem)
+            return
+        except Exception as e:
+            pass
+        try:
+            dtype = np.dtype('B')
+            with open(self.LUT_file_path, "rb") as f:
+                numpy_data = np.fromfile(f,dtype)
+            self._layer_combo.value.colormap = self.LUT_file_path.stem, NpColormap(numpy_data.reshape(3, 256).T/255, name=self.LUT_file_path.stem, display_name=self.LUT_file_path.stem)
+        except IOError:
+            print('Error While Opening the file!')   
 
 # %%
 #viewer = napari.Viewer()
